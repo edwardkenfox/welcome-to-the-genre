@@ -1,17 +1,28 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <hello></hello>
+    <input id="file" type="file" name="file" value="">
+    <button id="submit" type="button" @click="submit">送信</button>
   </div>
 </template>
-
 <script>
-import Hello from './components/Hello'
-
 export default {
   name: 'app',
-  components: {
-    Hello
+  methods: {
+    submit () {
+      const input = document.getElementById('file')
+      const url = 'http://localhost:8080/file'
+      fetch(url, {
+        method: 'POST',
+        body: {
+          file: input.files[0]
+        }
+      }).then(function (response) {
+        return response.json()
+      }).then(function (json) {
+        console.log(json)
+      })
+    }
   }
 }
 </script>
