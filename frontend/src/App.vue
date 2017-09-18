@@ -11,6 +11,7 @@ export default {
   methods: {
     submit () {
       const input = document.getElementById('file')
+      if (input.files.length === 0) return false;
       const url = 'http://localhost:8080/file'
       fetch(url, {
         method: 'POST',
