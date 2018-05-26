@@ -52,6 +52,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+		os.Remove(name)
 
 		tmpl.Execute(w, struct {
 			Success bool
