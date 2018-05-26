@@ -1,29 +1,18 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <input id="file" type="file" name="file" value="">
-    <button id="submit" type="button" @click="submit">送信</button>
+    <form action="http://localhost:8081/" method="post" enctype="multipart/form-data">
+      <img src="./assets/logo.png">
+      <input id="file" type="file" name="file" value="">
+      <button id="submit" type="submit">送信</button>
+    </form>
   </div>
 </template>
 <script>
+// Vueインスタンスの存在意義...
 export default {
   name: 'app',
-  methods: {
-    submit () {
-      const input = document.getElementById('file')
-      if (input.files.length === 0) return false;
-      const url = 'http://localhost:8080/file'
-      fetch(url, {
-        method: 'POST',
-        body: {
-          file: input.files[0]
-        }
-      }).then(function (response) {
-        return response.json()
-      }).then(function (json) {
-        console.log(json)
-      })
-    }
+  mounted () {
+    window.vm = this
   }
 }
 </script>
