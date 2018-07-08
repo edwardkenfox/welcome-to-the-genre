@@ -24,9 +24,8 @@ export default {
   },
 
   methods: {
-    validateFilePresence (ev) {
-      if (!this.$el.querySelector('#file').value) {
-        ev.preventDefault()
+    audioExists () {
+      if (!this.$el.querySelector('#file').value && !this.audioBlob) {
         return false
       }
       return true
@@ -62,6 +61,11 @@ export default {
       this.mediaRecorder.stop()
     },
     submit () {
+      if (!this.audioExists()) {
+        console.error('You must record audio or select an audio file to submit')
+        return false
+      }
+
       var fd = new FormData()
       fd.append('file', this.audioBlob, 'myaudio.txt')
 
