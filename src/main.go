@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type UploadedFile struct {
@@ -21,7 +22,7 @@ func (f *UploadedFile) save() error {
 }
 
 func main() {
-	tmpl := template.Must(template.ParseFiles("src/index.html"))
+	tmpl := template.Must(template.ParseFiles("src/result.json"))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Enable CORS
@@ -37,6 +38,8 @@ func main() {
 			tmpl.Execute(w, nil)
 			return
 		}
+
+		w.Header().Set("Content-Type", "application/json")
 
 		var Buf bytes.Buffer
 
@@ -62,11 +65,14 @@ func main() {
 			os.Exit(1)
 		}
 		os.Remove(name)
+		var Result string
+		Result = string(out)
+		Result = strings.TrimSuffix(Result, "\n")
 
 		tmpl.Execute(w, struct {
 			Success bool
 			Output  string
-		}{true, string(out)})
+		}{true, Result})
 	})
 
 	http.ListenAndServe(":8081", nil)
