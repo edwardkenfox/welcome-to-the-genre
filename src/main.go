@@ -21,9 +21,18 @@ func (f *UploadedFile) save() error {
 }
 
 func main() {
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	tmpl := template.Must(template.ParseFiles("src/index.html"))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Enable CORS
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		if r.Method != http.MethodPost {
 			tmpl.Execute(w, nil)
 			return
