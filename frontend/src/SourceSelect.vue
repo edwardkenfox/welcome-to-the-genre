@@ -1,18 +1,25 @@
 <template>
-  <div id="app">
+  <div class="container">
+    <Help></Help>
     <form action="http://localhost:8081/" method="post" enctype="multipart/form-data">
-      <img src="./assets/logo.png">
-      <audio id="player" controls></audio>
-      <button v-if="!isRecording" @click.prevent="startRecording">Start</button>
-      <button v-else @click.prevent="stopRecording">Stop</button>
-      <input id="file" type="file" name="file" accept="audio/*" capture>
-      <button id="submit" type="submit" @click.prevent="submit">送信</button>
+      <!-- TODO: fix to allow directly uploading files -->
+      <!-- <label class="button" for="file">Choose file</label>
+      <input id="file" type="file" name="file" accept="audio/*" capture style="display: none;" @change="submit"> -->
+      <div class="button" v-if="!isRecording" @click.prevent="startRecording">
+        Start
+      </div>
+      <div class="button" v-else @click.prevent="stopRecording">Stop</div>
     </form>
   </div>
 </template>
 <script>
+import Help from './Help'
 export default {
-  name: 'app',
+  name: 'SourceSelect',
+
+  components: {
+    Help
+  },
 
   data () {
     return {
@@ -25,15 +32,13 @@ export default {
 
   methods: {
     audioExists () {
-      if (!this.$el.querySelector('#file').value && !this.audioBlob) {
-        return false
-      }
+      // TODO: fix to allow directly uploading files
+      // if (!this.$el.querySelector('#file').value && !this.audioBlob) {
+      //   return false
+      // }
       return true
     },
     startRecording () {
-      const player = document.getElementById('player')
-      player.src = null
-
       this.isRecording = true
 
       navigator.mediaDevices.getUserMedia({ audio: true, video: false })
@@ -49,8 +54,7 @@ export default {
 
           this.mediaRecorder.addEventListener('stop', () => {
             this.audioBlob = new Blob(this.audioChunks)
-            const audioUrl = URL.createObjectURL(this.audioBlob)
-            player.src = audioUrl
+            this.submit()
           })
         })
     },
@@ -73,22 +77,11 @@ export default {
         method: 'POST',
         body: fd
       })
+      .then(res => res.json())
+      .then(json => {
+        this.$router.push({ path: `results/${json.genre}` })
+      })
     }
-  },
-
-  mounted () {
-    window.vm = this
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
